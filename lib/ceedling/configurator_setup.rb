@@ -58,8 +58,7 @@ class ConfiguratorSetup
     validation << @configurator_validator.exists?(config, :project)
     validation << @configurator_validator.exists?(config, :paths)
 
-    return false if (validation.include?(false))
-    return true
+    return !(validation.include?(false))
   end
 
   def validate_required_section_values(config)
@@ -68,8 +67,7 @@ class ConfiguratorSetup
     validation << @configurator_validator.exists?(config, :paths, :test)
     validation << @configurator_validator.exists?(config, :paths, :source)
 
-    return false if (validation.include?(false))
-    return true
+    return !(validation.include?(false))
   end
 
   def validate_paths(config)
@@ -90,8 +88,7 @@ class ConfiguratorSetup
       validation << @configurator_validator.validate_path_list(config, :paths, key)
     end
 
-    return false if (validation.include?(false))
-    return true
+    return !(validation.include?(false))
   end
 
   def validate_tools(config)
@@ -103,8 +100,7 @@ class ConfiguratorSetup
       validation << @configurator_validator.validate_tool_stderr_redirect(config, :tools, key)
     end
 
-    return false if (validation.include?(false))
-    return true
+    return !(validation.include?(false))
   end
 
   def validate_plugins(config)
