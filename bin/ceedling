@@ -217,6 +217,7 @@ else
         results = `#{cmd}`
         if ($?.exitstatus != 0)
           block.call( StringIO.new("ERROR: Aborted with Exit Code #{$?.exitstatus.to_s}") )
+          raise
         else
           block.call( StringIO.new(results) )
         end
