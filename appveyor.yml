@@ -14,6 +14,7 @@ before_test:
   - ruby -v
   - gem -v
   - bundle -v
+  - git submodule update --init --recursive
 
 test_script:
   - bundle exec rake ci
