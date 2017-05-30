@@ -3,7 +3,7 @@
 version: "{build}"
 
 install:
-  - set PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - set PATH=C:\Ruby%ruby_version%\bin;C:\MinGW\bin;%PATH%
   - gem update --system --no-document
   - gem install bundler --no-document
   - bundle install --jobs 3 --retry 3
