@@ -23,13 +23,13 @@ class ModuleGenerator < Plugin
   def divine_options(optz={})
     unity_generator_options =
     {
-      :path_src     => ((defined? MODULE_GENERATOR_SOURCE_ROOT ) ? MODULE_GENERATOR_SOURCE_ROOT.gsub('\\', '/').sub(/^\//, '').sub(/\/$/, '') : "src" ),
+      :path_src     => ((defined? MODULE_GENERATOR_SOURCE_ROOT ) ? MODULE_GENERATOR_SOURCE_ROOT.tr('\\', '/').sub(/^\//, '').sub(/\/$/, '') : "src" ),
       :path_inc     => ((defined? MODULE_GENERATOR_INC_ROOT ) ?
-                                 MODULE_GENERATOR_INC_ROOT.gsub('\\', '/').sub(/^\//, '').sub(/\/$/, '')
+                                 MODULE_GENERATOR_INC_ROOT.tr('\\', '/').sub(/^\//, '').sub(/\/$/, '')
                                  : (defined? MODULE_GENERATOR_SOURCE_ROOT ) ?
-                                 MODULE_GENERATOR_SOURCE_ROOT.gsub('\\', '/').sub(/^\//, '').sub(/\/$/, '')
+                                 MODULE_GENERATOR_SOURCE_ROOT.tr('\\', '/').sub(/^\//, '').sub(/\/$/, '')
                                  : "src" ),
-      :path_tst     => ((defined? MODULE_GENERATOR_TEST_ROOT   ) ? MODULE_GENERATOR_TEST_ROOT.gsub(  '\\', '/').sub(/^\//, '').sub(/\/$/, '') : "test" ),
+      :path_tst     => ((defined? MODULE_GENERATOR_TEST_ROOT   ) ? MODULE_GENERATOR_TEST_ROOT.tr(  '\\', '/').sub(/^\//, '').sub(/\/$/, '') : "test" ),
       :pattern      => optz[:pattern],
       :test_prefix  => ((defined? PROJECT_TEST_FILE_PREFIX     ) ? PROJECT_TEST_FILE_PREFIX : "Test" ),
       :mock_prefix  => ((defined? CMOCK_MOCK_PREFIX            ) ? CMOCK_MOCK_PREFIX : "Mock" ),

@@ -9,6 +9,7 @@ gem "constructor"
 gem "diy"
 gem "rr"
 gem "thor"
+gem "stackprof"
 
 #these will be used if present, but ignored otherwise
 #gem "curses"

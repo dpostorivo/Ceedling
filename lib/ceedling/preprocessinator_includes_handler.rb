@@ -55,11 +55,11 @@ class PreprocessinatorIncludesHandler
     # Extract the dependencies from the make rule
     hdr_ext = @configurator.extension_header
     dependencies = make_rule.split.find_all {|path| path.end_with?(hdr_ext) }.uniq
-    dependencies.map! {|hdr| hdr.gsub('\\','/') }
+    dependencies.map! {|hdr| hdr.tr('\\','/') }
 
     # Separate the real files form the annotated ones and remove the '@@@@'
     annotated_headers, real_headers = dependencies.partition {|hdr| hdr =~ /^@@@@/ }
-    annotated_headers.map! {|hdr| hdr.gsub('@@@@','') }
+    annotated_headers.map! {|hdr| hdr.tr('@@@@','') }
 
     # Find which of our annotated headers are "real" dependencies. This is
     # intended to weed out dependencies that have been removed due to build
@@ -79,7 +79,7 @@ class PreprocessinatorIncludesHandler
     # Extract direct dependencies that were also added
     src_ext = @configurator.extension_source
     sdependencies = make_rule.split.find_all {|path| path.end_with?(src_ext) }.uniq
-    sdependencies.map! {|hdr| hdr.gsub('\\','/') }
+    sdependencies.map! {|hdr| hdr.tr('\\','/') }
     list += sdependencies
 
     list

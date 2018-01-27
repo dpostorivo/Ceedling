@@ -14,7 +14,7 @@ end
 
 def convert_slashes(path)
   if RUBY_PLATFORM.downcase.match(/mingw|win32/)
-    path.gsub("/","\\")
+    path.tr("/","\\")
   else
     path
   end
@@ -148,7 +148,7 @@ class SystemContext
   end
 
   def reduce_env(destroy_keys=[])
-    ENV.keys.each {|k| ENV.delete(k) if destroy_keys.include?(k) }
+    ENV.each_key {|k| ENV.delete(k) if destroy_keys.include?(k) }
   end
 
   def constrain_env

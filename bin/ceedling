@@ -3,6 +3,7 @@
 #these are always used
 require 'rubygems'
 require 'fileutils'
+require 'stackprof'
 
 # Check for the main project file (either the one defined in the ENV or the default)
 main_filepath = ENV['CEEDLING_MAIN_PROJECT_FILE']
@@ -212,6 +213,7 @@ else
   require 'yaml'
   require 'rbconfig'
 
+StackProf.run(mode: :cpu, out: 'tmp/stackprof-cpu-rubocop.dump') do
   #determine platform
   platform = begin
     case(RbConfig::CONFIG['host_os'])
@@ -257,6 +259,7 @@ else
   options[:default_tasks]  = yaml_options[:default_tasks] if yaml_options[:default_tasks]
 
   #sort through command line options
+  debug = false
   ARGV.each do |v|
     case(v)
       when /^(?:new|examples?|templates?)$/
@@ -269,6 +272,8 @@ else
         options[:list_tasks] = true
       when /^project:(\w+)/
         ENV['CEEDLING_USER_PROJECT_FILE'] = "#{$1}.yml"
+      when /^(-d|--debug)$/
+        debug = true
       else
         options[:args].push(v)
     end
@@ -297,21 +302,32 @@ else
   end
 
   Rake.application.standard_exception_handling do
-    if options[:list_tasks]
-      # Display helpful task list when requested. This required us to dig into Rake internals a bit
-      Rake.application.define_singleton_method(:name=) {|n| @name = n}
-      Rake.application.name = 'ceedling'
-      Rake.application.options.show_tasks = :tasks
-      Rake.application.options.show_task_pattern = /^(?!.*build).*$/
-      Rake.application.display_tasks_and_comments()
-    else
-      task :default => options[:default_tasks]
+    begin
+      if options[:list_tasks]
+        # Display helpful task list when requested. This required us to dig into Rake internals a bit
+        Rake.application.define_singleton_method(:name=) {|n| @name = n}
+        Rake.application.name = 'ceedling'
+        Rake.application.options.show_tasks = :tasks
+        Rake.application.options.show_task_pattern = /^(?!.*build).*$/
+        Rake.application.display_tasks_and_comments()
+      else
+        task :default => options[:default_tasks]
 
-      # Run our Tasks!
-      Rake.application.collect_command_line_tasks(options[:args])
-      Rake.application.top_level
+        # Run our Tasks!
+        Rake.application.collect_command_line_tasks(options[:args])
+        Rake.application.top_level
+      end
+    rescue => err
+      puts err.message
+      if debug
+        #puts err.trace
+      else
+        puts "Use '-d' or '--debug' for stack trace"
+      end
+      exit(127)
     end
   end
   true
 #===================================================================================================================
+end
 end
