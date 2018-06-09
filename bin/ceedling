@@ -268,6 +268,8 @@ else
         options[:list_tasks] = true
       when /^project:(\w+)/
         ENV['CEEDLING_USER_PROJECT_FILE'] = "#{$1}.yml"
+      when /^-d$/
+        options[:debug] = true
       else
         options[:args].push(v)
     end
@@ -296,19 +298,32 @@ else
   end
 
   Rake.application.standard_exception_handling do
-    if options[:list_tasks]
-      # Display helpful task list when requested. This required us to dig into Rake internals a bit
-      Rake.application.define_singleton_method(:name=) {|n| @name = n}
-      Rake.application.name = 'ceedling'
-      Rake.application.options.show_tasks = :tasks
-      Rake.application.options.show_task_pattern = /^(?!.*build).*$/
-      Rake.application.display_tasks_and_comments()
-    else
-      task :default => options[:default_tasks]
+    begin
+      if options[:list_tasks]
+        # Display helpful task list when requested. This required us to dig into Rake internals a bit
+        Rake.application.define_singleton_method(:name=) {|n| @name = n}
+        Rake.application.name = 'ceedling'
+        Rake.application.options.show_tasks = :tasks
+        Rake.application.options.show_task_pattern = /^(?!.*build).*$/
+        Rake.application.display_tasks_and_comments()
+      else
+        task :default => options[:default_tasks]
 
-      # Run our Tasks!
-      Rake.application.collect_command_line_tasks(options[:args])
-      Rake.application.top_level
+        # Run our Tasks!
+        Rake.application.collect_command_line_tasks(options[:args])
+        Rake.application.top_level
+      end
+    rescue => e
+      puts "Ceedling has encountered an internal error.\n" +
+           "Run project with -d for backtraces."
+      #if e.respond_to?(shell_result) and e.shell_result
+      #  puts shell_result
+      #end
+      if options[:debug]
+        puts e.message
+        puts e.backtrace
+      end
+      exit 1
     end
   end
   true

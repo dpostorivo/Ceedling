@@ -5,12 +5,16 @@ def par_map(n, things, &block)
   things.each { |thing| queue << thing }
   threads = (1..n).collect do
     Thread.new do
+      Thread.current.report_on_exception = false
+      Thread.abort_on_exception = true
       begin
-        while true
+        until queue.empty?
           yield queue.pop(true)
         end
-      rescue ThreadError
-
+      rescue => e
+        puts e.message
+        puts e.backtrace
+        raise e
       end
     end
   end
