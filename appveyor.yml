@@ -1,9 +1,22 @@
 ---
+environment:
+  global:
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
+
+  matrix:
+    - ruby_version: '21'
+    - ruby_version: 21-x64
+    - ruby_version: '24'
+    - ruby_version: 24-x64
 
 version: "{build}"
 
 install:
-  - set PATH=C:\Ruby%ruby_version%\bin;C:\MinGW\bin;%PATH%
+  - set PATH=C:\Python27;C:\Python27\Scripts;C:\Ruby%ruby_version%\bin;C:\MinGW\bin;%PATH%
+  - "python -m pip install --upgrade pip"
+  - "python -m pip install gcovr"
+  - "python -m pip install httpie"
+  - ps: "cp \"C:/Python27/Scripts/gcovr\" \"C:/Python27/Scripts/gcovr.exe\""
   - gem update --system --no-document
   - gem install bundler --no-document
   - bundle install --jobs 3 --retry 3
@@ -11,6 +24,13 @@ install:
 build: off
 
 before_test:
+  - ECHO %PATH%
+  - ps: "ls \"C:/Python27/Scripts\""
+  - python --version
+  - pip -V
+  - pip freeze
+  - http --version
+  - gcovr --version
   - ruby -v
   - gem -v
   - bundle -v
@@ -19,9 +39,4 @@ before_test:
 test_script:
   - bundle exec rake ci
 
-environment:
-  matrix:
-    - ruby_version: '21'
-    - ruby_version: 21-x64
-    - ruby_version: '24'
-    - ruby_version: 24-x64
+
