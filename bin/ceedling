@@ -208,55 +208,6 @@ unless (project_found)
 
 #===================================== We Have A Project Already ================================================
 else
-  begin
-    require 'pty'
-
-    #if available, we use PTY because it will live-stream our data instead of buffering it all up
-    def spawn_command(cmd, &block)
-      begin
-        PTY.spawn(cmd) do |stdout, stdin, pid|
-          begin
-            block.call(stdout)
-          rescue Errno::EIO
-          end
-        end
-      rescue Exception => e
-        STDERR.puts e.inspect unless (e == PTY::ChildExited)
-      end
-    end
-
-  rescue LoadError
-
-    begin
-
-      require 'popen4'
-
-      #if pty wasn't available, we'll use POPEN instead
-      def spawn_command(cmd, &block)
-        POpen4.popen4(cmd) do |stdout, stderr, stdin|
-          begin
-            block.call(stdout)
-          rescue Errno::EIO
-          end
-        end
-      end
-
-    rescue LoadError
-
-      #if neither of these libraries were available, we can just shell out to the command and collect results
-      def spawn_command(cmd, &block)
-        results = `#{cmd}`
-        if ($?.exitstatus != 0)
-          block.call( StringIO.new("ERROR: Aborted with Exit Code #{$?.exitstatus.to_s}") )
-          raise
-        else
-          block.call( StringIO.new(results) )
-        end
-      end
-    end
-
-  end
-
   require 'yaml'
   require 'rbconfig'
 
