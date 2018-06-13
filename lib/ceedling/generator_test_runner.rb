@@ -7,7 +7,11 @@ class GeneratorTestRunner
 
     #Pull in Unity's Test Runner Generator
     require 'generate_test_runner.rb'
-    @test_runner_generator ||= UnityTestRunnerGenerator.new( @configurator.get_runner_config )
+    
+    runner_config = @configurator.get_runner_config
+    # delete the include as it isn't needed in the runner.
+    runner_config[:defines].delete("UNITY_INCLUDE_64")
+    @test_runner_generator ||= UnityTestRunnerGenerator.new( runner_config )
 
     if (@configurator.project_use_test_preprocessor)
 
