@@ -41,6 +41,7 @@ class ProjectFileLoader
     # next check for main project file by looking for environment variable and then default location on disk;
     # blow up if we don't find this guy -- like, he's so totally important
     main_filepath = @system_wrapper.env_get('CEEDLING_MAIN_PROJECT_FILE')
+    main_filepath = File.join(main_filepath, "project.yml") if File.directory?(main_filepath)
 
     if ( not main_filepath.nil? and @file_wrapper.exist?(main_filepath) )
       @main_project_filepath = main_filepath

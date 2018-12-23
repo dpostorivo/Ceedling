@@ -6,6 +6,7 @@ require 'fileutils'
 
 # Check for the main project file (either the one defined in the ENV or the default)
 main_filepath = ENV['CEEDLING_MAIN_PROJECT_FILE']
+main_filepath = File.join(main_filepath, "project.yml") if File.directory?(main_filepath)
 project_found = (!main_filepath.nil? && File.exists?(main_filepath))
 if (!project_found)
   main_filepath = "project.yml"
