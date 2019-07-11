@@ -8,14 +8,17 @@ class FileFinderHelper
   
   def find_file_in_collection(file_name, file_list, complain, extra_message="")
     file_to_find = nil
-    
+  
+    pp ''
+    pp file_list
     file_list.each do |item|
-      base_file = File.basename(item)
+      base_file = item
 
-      # case insensitive comparison
-      if (base_file.casecmp(file_name) == 0)
+      if (base_file.end_with?(file_name))
         # case sensitive check
-        if (base_file == file_name)
+        puts base_file
+        puts file_name
+        if (File.basename(base_file) == File.basename(file_name))
           file_to_find = item
           break
         else

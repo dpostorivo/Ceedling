@@ -118,6 +118,7 @@ class Generator
     @plugin_manager.pre_link_execute(arg_hash)
 
     @streaminator.stdout_puts("Linking #{File.basename(arg_hash[:executable])}...", Verbosity::NORMAL)
+    FileUtils.mkdir_p(File.dirname(object))
     command =
       @tool_executor.build_command_line( arg_hash[:tool],
                                          @flaginator.flag_down( OPERATION_LINK_SYM, context, executable ),

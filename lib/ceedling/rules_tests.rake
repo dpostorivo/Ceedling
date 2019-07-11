@@ -10,7 +10,7 @@ end
 
 rule(/#{PROJECT_TEST_BUILD_OUTPUT_C_PATH}\/#{'.+\\'+EXTENSION_OBJECT}$/ => [
     proc do |task_name|
-      @ceedling[:file_finder].find_compilation_input_file(task_name)
+      @ceedling[:file_finder].find_compilation_input_file(File.basename(task_name))
     end
   ]) do |object|
   if (File.basename(object.source) =~ /#{EXTENSION_SOURCE}$/)

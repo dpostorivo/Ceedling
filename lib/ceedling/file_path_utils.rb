@@ -169,7 +169,20 @@ class FilePathUtils
   end
 
   def form_test_build_objects_filelist(sources)
-    return (@file_wrapper.instantiate_file_list(sources)).pathmap("#{@configurator.project_test_build_output_c_path}/%n#{@configurator.extension_object}")
+    mocklist = []
+    otherlist = []
+    sources.each { |file|
+
+      idx = file.index(/#{@configurator.cmock_mock_prefix}/)
+      if idx != nil then
+        # puts "#{@configurator.cmock_mock_prefix}"
+        mocklist << ("#{@configurator.project_test_build_output_c_path}" + file.sub(/#{@configurator.cmock_mock_path}/, "")).ext(@configurator.extension_object)
+      else
+        otherlist << file
+      end
+    }
+    
+    return (@file_wrapper.instantiate_file_list(otherlist)).pathmap("#{@configurator.project_test_build_output_c_path}/%n#{@configurator.extension_object}") + mocklist
   end
 
   def form_preprocessed_mockable_headers_filelist(mocks)

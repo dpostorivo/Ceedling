@@ -16,7 +16,18 @@ class PreprocessinatorHelper
   end
 
   def assemble_mocks_list(test)
-    return @file_path_utils.form_mocks_source_filelist( @test_includes_extractor.lookup_raw_mock_list(test) )
+    raw_mock_list = @test_includes_extractor.lookup_raw_mock_list(test)
+    mlist = []
+    raw_mock_list.each {|file|
+      mfiel = @file_finder.find_compilation_input_file(file.sub(@configurator.cmock_mock_prefix, ""), :warning, false)
+      if mfiel != nil then
+        mfiel = @configurator.cmock_mock_path + "/" + mfiel.sub("../", "")
+        bname = File.basename(mfiel)
+        mfiel = mfiel.sub(bname, @configurator.cmock_mock_prefix + bname)
+        mlist << mfiel
+      end
+    }
+    return mlist
   end
 
   def preprocess_mockable_headers(mock_list, preprocess_file_proc)

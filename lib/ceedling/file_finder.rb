@@ -17,7 +17,12 @@ class FileFinder
 
 
   def find_header_file(mock_file)
-    header = File.basename(mock_file).sub(/#{@configurator.cmock_mock_prefix}/, '').ext(@configurator.extension_header)
+    idx = mock_file.index(/#{@configurator.cmock_mock_path}/)
+    header = File.basename(mock_file)
+    if idx != nil
+      header = mock_file.sub(/#{@configurator.cmock_mock_path}\//, '')
+    end
+    header = header.sub(/#{@configurator.cmock_mock_prefix}/, '').ext(@configurator.extension_header)
 
     found_path = @file_finder_helper.find_file_in_collection(header, @configurator.collection_all_headers, :error)
 
@@ -104,17 +109,19 @@ class FileFinder
             @file_wrapper.directory_listing( File.join(@configurator.project_test_runners_path, '*') ),
             complain)
 
-      elsif (@configurator.project_use_mocks and (source_file =~ /#{@configurator.cmock_mock_prefix}/))
+      elsif (@configurator.project_use_mocks and (file_path =~ /#{@configurator.cmock_mock_prefix}/))
+        source_file = file_path.ext(@configurator.extension_source)
+
         found_file =
           @file_finder_helper.find_file_in_collection(
             source_file,
-            @file_wrapper.directory_listing( File.join(@configurator.cmock_mock_path, '*') ),
+            @file_wrapper.directory_listing( File.join(@configurator.cmock_mock_path, '**/*') ),
             complain)
 
       elsif release
         found_file =
           @file_finder_helper.find_file_in_collection(
-            source_file,
+            file_path.ext(@configurator.extension_source),
             @configurator.collection_release_existing_compilation_input,
             complain)
       else
